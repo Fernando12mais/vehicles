@@ -1,12 +1,9 @@
-from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel
-from typing import List, Annotated
+from fastapi import FastAPI
 import models
-from database import engine, SessionLocal
-from sqlalchemy.orm import Session
-import os
+from database import engine, db_dependency
 
 from routes.user_routes import router as user_routes
+from routes.vehicle_routes import router as vehicle_routes
 
 from dotenv import load_dotenv
 
@@ -22,19 +19,8 @@ app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-
-    finally:
-        db.close()
-
-
-db_dependency = Annotated[Session, Depends(get_db)]
-
-
 app.include_router(router=user_routes, prefix="/user", tags=["user"])
+# app.include_router(router=vehicle_routes, prefix="/vehicle", tags=["vehicle"])
 
 
 @app.get("/")
@@ -50,9 +36,9 @@ async def index(db: db_dependency):
 
 @app.get("/upload/{file}")
 async def handle_upload(file: str):
-    response = await upload_file(file)
-    response
-    return response
+    test = await upload_file(file)
+    test
+    return test
 
 
 # @app.get("/test/{id}")
