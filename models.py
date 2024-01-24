@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, String, Integer
+from sqlalchemy import Column, String, Integer
 from database import Base
 
 
@@ -13,4 +13,6 @@ class Vehicle(Base):
     __tablename__ = "vehicles"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
-    year = Column(Integer)
+    brand = Column(String)
+    model = Column(String)
+    picture = Column(String)
