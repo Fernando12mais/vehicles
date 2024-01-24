@@ -4,8 +4,17 @@ from typing import List, Annotated
 import models
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
+import os
 
 from routes.user_routes import router as user_routes
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+from upload_file import upload_file
+
 
 app = FastAPI()
 
@@ -37,6 +46,13 @@ async def index(db: db_dependency):
     db.refresh(user)
 
     return {"message": "Hello world", "user": user}
+
+
+@app.get("/upload/{file}")
+async def handle_upload(file: str):
+    response = await upload_file(file)
+    response
+    return response
 
 
 # @app.get("/test/{id}")

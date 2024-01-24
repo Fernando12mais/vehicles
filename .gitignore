@@ -36,3 +36,4 @@ ENV/
 __MACOSX/
 *.sqlite3
 *.log
+.env
