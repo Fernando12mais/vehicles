@@ -35,22 +35,22 @@ async def create(data: CreateVehicleSchema, db: db_dependency):
 
 @router.put("/")
 async def update_vehicle(data: UpdateVehicleSchema, db: db_dependency):
-    existing_vehicle = get_vehicle(db, data.id)
-    if existing_vehicle is None:
+    vehicle = get_vehicle(db, data.id)
+    if vehicle is None:
         raise HTTPException(status_code=404, detail="Vehicle not found")
 
-    result = upload_file(data.picture).url if data.picture else existing_vehicle.picture
+    result = upload_file(data.picture).url if data.picture else vehicle.picture
 
     updated_data = data.model_dump()
     updated_data["picture"] = result
 
     for key, value in updated_data.items():
         if value:
-            setattr(existing_vehicle, key, value)
+            setattr(vehicle, key, value)
 
     db.commit()
-    db.refresh(existing_vehicle)
-    return existing_vehicle
+    db.refresh(vehicle)
+    return vehicle
 
 
 @router.delete("/{vehicle_id}")
