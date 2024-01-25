@@ -1,21 +1,21 @@
-from typing import List
 from fastapi import APIRouter, HTTPException
 from database import db_dependency
-from schemas import CreateVehicleSchema, UpdateVehicleSchema
+from schemas.vehicle_schema import CreateVehicleSchema, UpdateVehicleSchema
 from models import Vehicle
 from utils.upload_file import upload_file
+from utils.model import get_model_by_id, delete_model_by_id, get_all
 
 
-router = APIRouter()
+router = APIRouter(prefix="/vehicle", tags=["vehicle"])
 
 
-def get_vehicle(db: db_dependency, vehicle_id: int):
-    return db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
+def get_vehicle(db: db_dependency, id: int):
+    return get_model_by_id(Vehicle, id, db)
 
 
 @router.get("/")
 async def get_all_vehicles(db: db_dependency):
-    return db.query(Vehicle).all()
+    return get_all(Vehicle, db)
 
 
 @router.post("/")
@@ -53,13 +53,8 @@ async def update_vehicle(data: UpdateVehicleSchema, db: db_dependency):
     return vehicle
 
 
-@router.delete("/{vehicle_id}")
-async def delete_vehicle(vehicle_id: int, db: db_dependency):
-    vehicle = get_vehicle(db, vehicle_id)
-    if vehicle is None:
-        raise HTTPException(status_code=404, detail="Vehicle not found")
-
-    db.delete(vehicle)
-    db.commit()
+@router.delete("/{id}")
+async def delete_vehicle(id: int, db: db_dependency):
+    delete_model_by_id(Vehicle, id, db)
 
     return {"message": "Vehicle deleted successfully"}
