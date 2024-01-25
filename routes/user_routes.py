@@ -3,8 +3,8 @@ from database import db_dependency
 from schemas.vehicle_schema import UpdateVehicleSchema
 from models import User
 from schemas.user_schema import CreateUserSchema
-from utils.model import get_model_by_id, delete_model_by_id, get_all
-from auth import bcrypt_context, auth_dependency
+from utils.model import get_model_by_id
+from auth import bcrypt_context, auth_dependency, protected
 from starlette import status
 
 
@@ -25,12 +25,16 @@ async def get_user(user: auth_dependency):
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create(data: CreateUserSchema, db: db_dependency):
     newUser = User(name=data.name, password=bcrypt_context.hash(data.password))
-
     db.add(newUser)
     db.commit()
     db.refresh(newUser)
 
     return {"message": "Usuário criado com sucesso!", "user": newUser}
+
+
+router.dependencies.append(protected)
+
+# --------------------- protected routes below --------------------------------
 
 
 @router.put("/")
@@ -46,10 +50,3 @@ async def update_user(data: UpdateVehicleSchema, db: db_dependency):
     db.commit()
     db.refresh(user)
     return user
-
-
-@router.delete("/{id}")
-async def delete_user(id: int, db: db_dependency):
-    delete_model_by_id(User, id, db)
-
-    return {"message": "User deleted successfully"}

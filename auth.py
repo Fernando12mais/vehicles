@@ -37,7 +37,8 @@ def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
         )
 
 
-auth_dependency = Annotated[dict, Depends(get_current_user)]
+protected = Depends(get_current_user)
+auth_dependency = Annotated[dict, protected]
 
 
 def authenticate_user(name: str, password: str, db: db_dependency):
