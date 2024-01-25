@@ -16,3 +16,4 @@ class Vehicle(Base):
     brand = Column(String)
     model = Column(String)
     picture = Column(String)
+    price = Column(Integer)
