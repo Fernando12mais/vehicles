@@ -4,6 +4,7 @@ from schemas.vehicle_schema import CreateVehicleSchema, UpdateVehicleSchema
 from models import Vehicle
 from utils.upload_file import upload_file
 from utils.model import get_model_by_id, delete_model_by_id, get_all
+from auth import protected
 
 
 router = APIRouter(prefix="/vehicle", tags=["vehicle"])
@@ -16,6 +17,9 @@ def get_vehicle(db: db_dependency, id: int):
 @router.get("/")
 async def get_all_vehicles(db: db_dependency):
     return get_all(Vehicle, db)
+
+
+router.dependencies.append(protected)
 
 
 @router.post("/")

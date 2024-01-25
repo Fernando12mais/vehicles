@@ -34,8 +34,6 @@ async def create(data: CreateUserSchema, db: db_dependency):
 
 router.dependencies.append(protected)
 
-# --------------------- protected routes below --------------------------------
-
 
 @router.put("/")
 async def update_user(data: UpdateVehicleSchema, db: db_dependency):
