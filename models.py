@@ -1,3 +1,4 @@
+from pickle import NONE
 from sqlalchemy import Column, ForeignKey, String, Integer, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from database import Base
@@ -28,12 +29,6 @@ class VehicleImage(Base):
     id = Column(Integer, primary_key=True, index=True)
     url = Column(String)
     vehicle_id = Column(Integer, ForeignKey("vehicles.id"))
+    file_id = Column(String)
 
     vehicle = relationship("Vehicle", back_populates="images")
-
-
-class Token(Base):
-    __tablename__ = "token"
-    token = Column(String, unique=True, primary_key=True)
-    valid = Column(Boolean)
-    expiration = Column(DateTime)

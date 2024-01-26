@@ -3,7 +3,7 @@ from math import exp
 from typing import Annotated
 from fastapi import Depends, HTTPException
 from database import db_dependency
-from models import Token, User
+from models import User
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
@@ -20,8 +20,7 @@ oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 def get_current_user(token: Annotated[str, Depends(oauth2_bearer)], db: db_dependency):
     try:
-        db_token = db.query(Token).filter(Token.token == token).first()
-        if not token or db_token and not db_token.valid:
+        if not token:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciais inválidas"
             )
@@ -60,4 +59,4 @@ def create_access_token(name: str, id: str, expiration: timedelta):
     encode["exp"] = expires
 
     token = jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
-    return Token(token=token, expiration=expires, valid=True)
+    return token

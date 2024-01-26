@@ -8,17 +8,20 @@ from routes.auth_routes import router as auth_routes
 
 from fastapi.middleware.cors import CORSMiddleware
 from auth import bcrypt_context
+from utils.file import upload_image
 
 
 app = FastAPI()
 
 
-origins = ["*"]
+origins = ["*", "192.168.100.13:3000"]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 Base.metadata.create_all(bind=engine)
@@ -36,8 +39,9 @@ vehicles_to_add = [
         model="Toro",
         images=[
             VehicleImage(
-                vehicle_id=1,
-                url="https://images.prd.kavak.io/eyJidWNrZXQiOiJrYXZhay1pbWFnZXMiLCJrZXkiOiJpbWFnZXMvMjk3OTE0L0VYVEVSSU9SLWZyb250U2lkZVBpbG90TmVhci0xNzA2MDMzNzM1MDI3LmpwZWciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjU0MCwiaGVpZ2h0IjozMTB9fX0=",
+                **upload_image(
+                    "https://images.prd.kavak.io/eyJidWNrZXQiOiJrYXZhay1pbWFnZXMiLCJrZXkiOiJpbWFnZXMvMjk3OTE0L0VYVEVSSU9SLWZyb250U2lkZVBpbG90TmVhci0xNzA2MDMzNzM1MDI3LmpwZWciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjU0MCwiaGVpZ2h0IjozMTB9fX0="
+                )
             )
         ],
         price=130899,
@@ -48,7 +52,9 @@ vehicles_to_add = [
         model="Cherry",
         images=[
             VehicleImage(
-                url="https://images.prd.kavak.io/eyJidWNrZXQiOiJrYXZhay1pbWFnZXMiLCJrZXkiOiJpbWFnZXMvMjk2NzE0L0VYVEVSSU9SLWZyb250U2lkZVBpbG90TmVhci0xNzA1MzQyNTU3ODAyLmpwZWciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjU0MCwiaGVpZ2h0IjozMTB9fX0=",
+                **upload_image(
+                    "https://images.prd.kavak.io/eyJidWNrZXQiOiJrYXZhay1pbWFnZXMiLCJrZXkiOiJpbWFnZXMvMjk2NzE0L0VYVEVSSU9SLWZyb250U2lkZVBpbG90TmVhci0xNzA1MzQyNTU3ODAyLmpwZWciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjU0MCwiaGVpZ2h0IjozMTB9fX0="
+                )
             )
         ],
         price=111199,
@@ -59,7 +65,9 @@ vehicles_to_add = [
         model="Aircross",
         images=[
             VehicleImage(
-                url="https://images.prd.kavak.io/eyJidWNrZXQiOiJrYXZhay1pbWFnZXMiLCJrZXkiOiJpbWFnZXMvMjk2NTU2L0VYVEVSSU9SLWZyb250U2lkZVBpbG90TmVhci0xNzA1NTE5NTQ1MjQwLmpwZWciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjU0MCwiaGVpZ2h0IjozMTB9fX0="
+                **upload_image(
+                    "https://images.prd.kavak.io/eyJidWNrZXQiOiJrYXZhay1pbWFnZXMiLCJrZXkiOiJpbWFnZXMvMjk2NTU2L0VYVEVSSU9SLWZyb250U2lkZVBpbG90TmVhci0xNzA1NTE5NTQ1MjQwLmpwZWciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjU0MCwiaGVpZ2h0IjozMTB9fX0="
+                )
             )
         ],
         price=61799,
@@ -68,11 +76,7 @@ vehicles_to_add = [
         name="Chevrolet 2019",
         brand="Chevrolet",
         model="Prisma",
-        images=[
-            VehicleImage(
-                url="https://images.prd.kavak.io/eyJidWNrZXQiOiJrYXZhay1pbWFnZXMiLCJrZXkiOiJpbWFnZXMvMjk1ODM5L0VYVEVSSU9SLWZyb250U2lkZVBpbG90TmVhci0xNzA0NTg0NzQ5MjkyLmpwZWciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjU0MCwiaGVpZ2h0IjozMTB9fX0="
-            )
-        ],
+        images=[],
         price=60799,
     ),
 ]

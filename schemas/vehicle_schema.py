@@ -8,6 +8,7 @@ class CreateVehicleImageSchema(BaseModel):
 
 class VehicleImageSchema(CreateVehicleImageSchema):
     id: int
+    file_id: str
 
 
 class VehicleSchema(BaseModel):
@@ -30,9 +31,10 @@ class CreateVehicleSchema(BaseModel):
     images: List[CreateVehicleImageSchema]
 
 
-class UpdateVehicleSchema(BaseModel):
+class UpdateVehicleSchema(VehicleSchema):
+    id: int
     name: Optional[str] = None
     brand: Optional[str] = None
     model: Optional[str] = None
     picture: Optional[str] = None
-    price: Optional[int] = None
+    images: List[CreateVehicleImageSchema]
