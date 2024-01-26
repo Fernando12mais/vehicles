@@ -1,7 +1,12 @@
+from typing import List
 from fastapi import APIRouter, HTTPException
 from database import db_dependency
-from schemas.vehicle_schema import CreateVehicleSchema, UpdateVehicleSchema
-from models import Vehicle
+from schemas.vehicle_schema import (
+    CreateVehicleSchema,
+    UpdateVehicleSchema,
+    VehicleSchema,
+)
+from models import Vehicle, VehicleImage
 from utils.upload_file import upload_file
 from utils.model import get_model_by_id, delete_model_by_id, get_all
 from auth import protected
@@ -9,32 +14,31 @@ from auth import protected
 
 router = APIRouter(prefix="/vehicle", tags=["vehicle"])
 
+router.dependencies.append(protected)
+
 
 def get_vehicle(db: db_dependency, id: int):
     return get_model_by_id(Vehicle, id, db)
 
 
-@router.get("/")
+@router.get("", response_model=list[VehicleSchema])
 async def get_all_vehicles(db: db_dependency):
-    return get_all(Vehicle, db)
+    vehicles = db.query(Vehicle).all()
+
+    return vehicles
 
 
-router.dependencies.append(protected)
+@router.get("/{id}", response_model=VehicleSchema)
+async def get_vehicle(db: db_dependency, id: int):
+    vehicle = get_model_by_id(Vehicle, id, db)
+    return vehicle
 
 
-@router.post("/")
+@router.post("/", response_model=VehicleSchema)
 async def create(data: CreateVehicleSchema, db: db_dependency):
-    result = upload_file(data.picture)
+    vehicle = add_vehicle(data, db)
 
-    validatedBody = data.model_dump()
-    validatedBody["picture"] = result.url
-    vehicle = Vehicle(**validatedBody)
-
-    db.add(vehicle)
-    db.commit()
-    db.refresh(vehicle)
-
-    return {"message": "Veículo adicionado com sucesso!", "vehicle": vehicle}
+    return vehicle
 
 
 @router.put("/")
@@ -62,3 +66,21 @@ async def delete_vehicle(id: int, db: db_dependency):
     delete_model_by_id(Vehicle, id, db)
 
     return {"message": "Vehicle deleted successfully"}
+
+
+def add_vehicle(data: CreateVehicleSchema, db: db_dependency):
+    validatedBody = data.model_dump()
+
+    for index, image in enumerate(data.images):
+        newImage = upload_file(image.url)
+        validatedBody["images"][index] = VehicleImage(url=newImage.url)
+
+    vehicle = Vehicle(**validatedBody)
+
+    db.add(vehicle)
+    db.commit()
+    db.refresh(vehicle)
+
+    db.commit()
+
+    return vehicle

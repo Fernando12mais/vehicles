@@ -1,5 +1,13 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
+
+
+class CreateVehicleImageSchema(BaseModel):
+    url: str
+
+
+class VehicleImageSchema(CreateVehicleImageSchema):
+    id: int
 
 
 class VehicleSchema(BaseModel):
@@ -7,15 +15,22 @@ class VehicleSchema(BaseModel):
     name: str
     brand: str
     model: str
-    picture: str
     price: int
+    images: List[VehicleImageSchema]
+
+    class Config:
+        from_attributes = True
 
 
-class CreateVehicleSchema(VehicleSchema):
-    id: None = None
+class CreateVehicleSchema(BaseModel):
+    name: str
+    brand: str
+    model: str
+    price: int
+    images: List[CreateVehicleImageSchema]
 
 
-class UpdateVehicleSchema(VehicleSchema):
+class UpdateVehicleSchema(BaseModel):
     name: Optional[str] = None
     brand: Optional[str] = None
     model: Optional[str] = None

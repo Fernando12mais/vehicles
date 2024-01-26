@@ -4,7 +4,7 @@ from schemas.vehicle_schema import UpdateVehicleSchema
 from models import User
 from schemas.user_schema import CreateUserSchema
 from utils.model import get_model_by_id
-from auth import bcrypt_context, auth_dependency, protected
+from auth import bcrypt_context, protected
 from starlette import status
 
 
@@ -15,16 +15,11 @@ def get_user(db: db_dependency, id: int):
     return get_model_by_id(User, id, db)
 
 
-@router.get("/")
-async def get_user(user: auth_dependency):
-    if user is None:
-        raise HTTPException(status_code=401, detail="Credenciais inválidas")
-    return {"User": user.items()}
-
-
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 async def create(data: CreateUserSchema, db: db_dependency):
-    newUser = User(name=data.name, password=bcrypt_context.hash(data.password))
+    newUser = User(
+        name=data.name, email=data.email, password=bcrypt_context.hash(data.password)
+    )
     db.add(newUser)
     db.commit()
     db.refresh(newUser)
