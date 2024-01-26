@@ -19,7 +19,7 @@ async def login(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciais inválidas"
         )
-    token = create_access_token(user.name, user.id, timedelta(minutes=1))
+    token = create_access_token(user.name, user.id, timedelta(minutes=30))
 
     return {
         "message": "Usuário logado com sucesso!",
