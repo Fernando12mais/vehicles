@@ -4,6 +4,16 @@
 Um projeto para testar minhas habilidades.
 
 
+## Funcionalidades
+
+- Autenticação com JWT
+- Cadastro, deleção, edição e leitura de veículos
+- Rotas públicas
+- Rotas privadas
+- Persistência de dados utilizando PostgreSQL
+- Upload de imagens através do imageKit
+- Deleção de imagens
+
 ## Instalação
 
 Clone o repositório
