@@ -11,6 +11,7 @@ from utils.file import upload_file, delete_file
 from utils.model import get_model_by_id, delete_model_by_id
 from auth import protected
 from sqlalchemy import or_
+from starlette import status
 
 
 router = APIRouter(prefix="/vehicle", tags=["vehicle"])
@@ -35,8 +36,6 @@ def add_vehicle(data: CreateVehicleSchema, db: db_dependency):
     db.commit()
     db.refresh(vehicle)
 
-    db.commit()
-
     return vehicle
 
 
@@ -44,7 +43,7 @@ def add_vehicle(data: CreateVehicleSchema, db: db_dependency):
 async def get_all_vehicles(db: db_dependency, search: str = ""):
     search_fields = [Vehicle.brand, Vehicle.name, Vehicle.model]
     conditions = or_(*[field.ilike(f"%{search}%") for field in search_fields])
-    vehicles = db.query(Vehicle).filter(conditions).all()
+    vehicles = db.query(Vehicle).filter(conditions).order_by(Vehicle.price).all()
 
     return vehicles
 
@@ -58,14 +57,14 @@ async def get_vehicle(db: db_dependency, id: int) -> VehicleSchema:
 router.dependencies.append(protected)
 
 
-@router.post("", response_model=VehicleSchema)
+@router.post("", response_model=VehicleSchema, status_code=status.HTTP_201_CREATED)
 async def create(data: CreateVehicleSchema, db: db_dependency):
     vehicle = add_vehicle(data, db)
 
     return vehicle
 
 
-@router.put("")
+@router.put("", status_code=status.HTTP_200_OK)
 async def update_vehicle(data: UpdateVehicleSchema, db: db_dependency):
     vehicle = await get_vehicle(db, data.id)
 

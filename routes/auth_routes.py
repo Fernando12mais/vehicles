@@ -9,7 +9,7 @@ from datetime import timedelta
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/login", status_code=status.HTTP_201_CREATED)
+@router.post("/login", status_code=status.HTTP_200_OK)
 async def login(
     data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency
 ):
